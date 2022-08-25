@@ -56,7 +56,7 @@ pub use internal::apply_vibrancy;
 
 #[cfg(target_os = "macos")]
 mod internal {
-  use super::{NSVisualEffectMaterial, NSVisualEffectState};
+  use super::NSVisualEffectMaterial;
 
   use cocoa::{
     appkit::{
@@ -72,7 +72,7 @@ mod internal {
   use crate::Error;
 
   #[allow(deprecated)]
-  pub fn apply_vibrancy(window: id, appearance: NSVisualEffectMaterial, state:NSVisualEffectState, raidus: f64) -> Result<(), Error> {
+  pub fn apply_vibrancy(window: id, appearance: NSVisualEffectMaterial, state: u32, raidus: f64) -> Result<(), Error> {
     unsafe {
       if NSAppKitVersionNumber < NSAppKitVersionNumber10_10 {
         eprintln!("\"NSVisualEffectView\" is only available on macOS 10.10 or newer");
@@ -88,8 +88,14 @@ mod internal {
       }
 
       let mut m = appearance;
-      let r = radius;
-      let mut s = state;
+      let r = raidus;
+      let mut s = NSVisualEffectState::FollowsWindowActiveState;
+
+      if state == 1 {
+        s = NSVisualEffectState::Active;
+      }else if state == 2 {
+        s = NSVisualEffectState::Inactive;
+      }
 
       if appearance as u32 > 9 && NSAppKitVersionNumber < NSAppKitVersionNumber10_14 {
         m = NSVisualEffectMaterial::AppearanceBased;
