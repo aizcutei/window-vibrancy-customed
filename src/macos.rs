@@ -56,7 +56,7 @@ pub use internal::apply_vibrancy;
 
 #[cfg(target_os = "macos")]
 mod internal {
-  use super::NSVisualEffectMaterial;
+  use super::{NSVisualEffectMaterial, NSVisualEffectState};
 
   use cocoa::{
     appkit::{
